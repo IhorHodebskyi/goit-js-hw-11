@@ -26,3 +26,49 @@
   background-size: cover;
   background-position: center;
 }
+
+body {
+  font-family: sans-serif;
+}
+
+.gallery-item {
+  width: 400px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery-item__img {
+  width: 360px;
+}
+
+.info {
+}
+
+.info-item {
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  font-weight: 300;
+}
+
+.search-form {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  gap: 15px;
+  margin: 0 0 15px;
+  background-color: #6495ed;
+}
+.gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  row-gap: 15px;
+  column-gap: 15px;
+}
+.load-more {
+  display: none;
+
+  margin: 0 auto;
+}
