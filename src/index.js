@@ -92,7 +92,7 @@ function onSearchForm(e) {
 function onloadMore() {
   page += 1;
   simpleLightBox.destroy();
-  // simpleLightBox.refresh();
+  simpleLightBox.refresh();
 
   fetchImages(query, page, perPage)
     .then(data => {
@@ -129,6 +129,7 @@ arrowTop.onclick = function () {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-window.addEventListener('scroll', function () {
-  arrowTop.hidden = scrollY < document.documentElement.clientHeight;
-});
+// window.addEventListener('scroll', function () {
+//   arrowTop.hidden = scrollY < document.documentElement.clientHeight;
+//   console.log(document.documentElement.clientHeight);
+// });
