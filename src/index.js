@@ -48,14 +48,14 @@ function renderGallery(images) {
 
   gallery.insertAdjacentHTML('beforeend', markup);
 
-  // const { height: cardHeight } = document
-  //   .querySelector('.gallery')
-  //   .firstElementChild.getBoundingClientRect();
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
 
-  // window.scrollBy({
-  //   top: cardHeight * 2,
-  //   behavior: 'smooth',
-  // });
+  window.scrollBy({
+    top: cardHeight * 1,
+    behavior: 'smooth',
+  });
 }
 
 function onSearchForm(e) {
@@ -125,11 +125,11 @@ function showLoadMorePage() {
 
 window.addEventListener('scroll', showLoadMorePage);
 
-// arrowTop.onclick = function () {
-//   window.scrollTo({ top: 0, behavior: 'smooth' });
-// };
+arrowTop.onclick = function () {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
-// window.addEventListener('scroll', function () {
-//   arrowTop.hidden = scrollY < document.documentElement.clientHeight;
-//   console.log(document.documentElement.clientHeight);
-// });
+window.addEventListener('scroll', function () {
+  arrowTop.hidden = scrollY < document.documentElement.clientHeight;
+  console.log(document.documentElement.clientHeight);
+});
