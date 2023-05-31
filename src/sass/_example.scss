@@ -48,7 +48,7 @@ p {
 @media screen and (min-width: 300px) {
    .searching-box {
       display: flex;
-      background-color: rgb(26, 26, 150);
+      background-color: rgb(9, 132, 248);
       justify-content: center;
       align-items: center;
    }
@@ -196,10 +196,10 @@ p {
    line-height: 1.875;
    letter-spacing: 0.06em;
    color: white;
-   background-color: rgb(26, 26, 150);
+   background-color: rgb(9, 132, 248);
    border: none;
    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.15);
-   border-radius: 6px;
+   border-radius: 25px;
    cursor: pointer;
    text-align: center;
 }
