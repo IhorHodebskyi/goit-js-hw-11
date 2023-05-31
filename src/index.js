@@ -85,10 +85,10 @@ function onSearchForm(e) {
     })
     .catch(error => console.log(error))
     .finally(() => {
-      searchForm.reset();
+      // searchForm.reset();
     });
 }
-
+``;
 function onloadMore() {
   page += 1;
   simpleLightBox.destroy();
