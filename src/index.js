@@ -1,134 +1,127 @@
-import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { fetchImages } from './js/fetchImages';
+import Notiflix from 'notiflix';
+import axios from 'axios';
 
-const searchForm = document.getElementById('search-form');
+const searchingBox = document.querySelector('.searching-box');
+const searchQuery = document.querySelector('input[name="searchQuery"]');
+
+const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
+const clear = elems => [...elems.children].forEach(div => div.remove());
+const loadBtn = document.querySelector('.load-more');
+const lightbox = () => new SimpleLightbox('.gallery a', {});
+let perPage = 40;
+let page = 0;
+let name = searchQuery.value;
 
-let query = '';
-let page = 1;
-let simpleLightBox;
-const perPage = 40;
+loadBtn.style.display = 'none';
 
-searchForm.addEventListener('submit', onSearchForm);
-
-function renderGallery(images) {
-  if (!gallery) {
-    return;
-  }
-
-  const markup = images
-    .map(image => {
-      const {
-        id,
-        largeImageURL,
-        webformatURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      } = image;
-      return `
-          <div class="gallery-item" id="${id}">
-          <a class="gallery__link" href="${largeImageURL}">
-            <img class="gallery-item__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
-            </a>
-            <div class="info">
-              <p class="info-item"><b>Likes</b>${likes}</p>
-              <p class="info-item"><b>Views</b>${views}</p>
-              <p class="info-item"><b>Comments</b>${comments}</p>
-              <p class="info-item"><b>Downloads</b>${downloads}</p>
-            </div>
-          </div>
-      `;
-    })
-    .join('');
-
-  gallery.insertAdjacentHTML('beforeend', markup);
-
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
-
-  window.scrollBy({
-    top: cardHeight * 1,
-    behavior: 'smooth',
-  });
+const BASE_URL = 'https://pixabay.com/api/';
+const API_KEY = '36811784-c13148b3b1c3296db8a3ae716';
+const params = 'image_type=photo&orientation=horizontal&safesearch=true';
+async function fetchImages(name, page) {
+   try {
+      const response = await axios.get(`${BASE_URL}?key=${API_KEY}&q=${name}&${params}&page=${page}&per_page=${perPage}`);
+      console.log(response);
+      return response.data;
+   } catch (error) {
+      console.log(error);
+   }
 }
 
-function onSearchForm(e) {
-  e.preventDefault();
-  page = 1;
-  query = e.currentTarget.elements.searchQuery.value.trim();
-  gallery.innerHTML = '';
+async function eventHandler(ev) {
+   ev.preventDefault();
+   clear(gallery);
+   loadBtn.style.display = 'none';
+   page = 1;
+   name = searchQuery.value;
+   console.log(name);
+   fetchImages(name, page)
+      .then(name => {
+         console.log(`Number of arrays: ${name.hits.length}`);
+         console.log(`Total hits: ${name.totalHits}`);
+         let totalPages = Math.ceil(name.totalHits / perPage);
+         console.log(`Total pages: ${totalPages}`);
 
-  if (query === '') {
-    Notiflix.Notify.failure(
-      'The search string cannot be empty. Please specify your search query.'
-    );
-    return;
-  }
+         if (name.hits.length > 0) {
+            Notiflix.Notify.success(`Hooray! We found ${name.totalHits} images.`);
+            renderGallery(name);
+            console.log(`Current page: ${page}`);
+            lightbox();
+            //const lightbox = new SimpleLightbox('.gallery a', {});
+            //smooth scrool to up
 
-  fetchImages(query, page, perPage)
-    .then(data => {
-      if (data.totalHits === 0) {
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      } else {
-        renderGallery(data.hits);
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-        Notiflix.Notify.success(`We found ${data.totalHits} images.`);
-      }
-    })
-    .catch(error => console.log(error))
-    .finally(() => {
-      // searchForm.reset();
-    });
-}
-function onloadMore() {
-  page += 1;
-  simpleLightBox.destroy();
-  simpleLightBox.refresh();
+            if (page < totalPages) {
+               loadBtn.style.display = 'block';
+            } else {
+               loadBtn.style.display = 'none';
+               console.log('There are no more images');
+               Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+            }
+         } else {
+            Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
 
-  fetchImages(query, page, perPage)
-    .then(data => {
-      renderGallery(data.hits);
-      simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-
-      const totalPages = Math.ceil(data.totalHits / perPage);
-
-      if (page > totalPages) {
-        Notiflix.Notify.failure(
-          "We're sorry, but you've reached the end of search results."
-        );
-      }
-    })
-    .catch(error => console.log(error));
+            clear(gallery); //reset view in case of failure
+         }
+      })
+      .catch(error => console.log(error));
 }
 
-function checkIfEndOfPage() {
-  return (
-    window.innerHeight + window.pageYOffset >=
-    document.documentElement.scrollHeight
-  );
+searchForm.addEventListener('submit', eventHandler);
+
+function renderGallery(name) {
+   const markup = name.hits
+      .map(hit => {
+         return `<div class="photo-card">
+      <a class="gallery__item" href="${hit.largeImageURL}"> <img class="gallery__image" src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" /></a>
+      <div class="info">
+        <p class="info-item">
+          <p><b>Likes</b> <br>${hit.likes}</br></p>
+        </p>
+        <p class="info-item">
+          <p><b>Views</b> <br>${hit.views}</br></p>
+        </p>
+        <p class="info-item">
+          <p><b>Comments</b> <br>${hit.comments}</br></p>
+        </p>
+        <p class="info-item">
+          <p><b>Downloads</b> <br>${hit.downloads}</br></p>
+        </p>
+      </div>
+    </div>`;
+      })
+      .join('');
+   gallery.insertAdjacentHTML('beforeend', markup);
 }
 
-function showLoadMorePage() {
-  if (checkIfEndOfPage()) {
-    onloadMore();
-  }
-}
+loadBtn.addEventListener(
+   'click',
+   () => {
+      name = searchQuery.value;
+      console.log('load more images');
+      page += 1;
+      fetchImages(name, page).then(name => {
+         let totalPages = Math.ceil(name.totalHits / perPage);
+         renderGallery(name);
+         //smooth scroll
+         const { height: cardHeight } = document.querySelector('.gallery').firstElementChild.getBoundingClientRect();
 
-window.addEventListener('scroll', showLoadMorePage);
+         window.scrollBy({
+            top: cardHeight * 2,
+            behavior: 'smooth',
+         });
+         //===
+         lightbox().refresh();
+         console.log(`Current page: ${page}`);
 
-arrowTop.onclick = function () {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-window.addEventListener('scroll', function () {
-  arrowTop.hidden = scrollY < document.documentElement.clientHeight;
-  console.log(arrowTop.hidden);
-});
+         if (page >= totalPages) {
+            loadBtn.style.display = 'none';
+            console.log('There are no more images');
+            Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+         }
+      });
+      //console.log("Load more button clicked");
+   },
+   true,
+);
