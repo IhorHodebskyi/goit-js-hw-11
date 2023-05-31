@@ -88,7 +88,6 @@ function onSearchForm(e) {
       // searchForm.reset();
     });
 }
-``;
 function onloadMore() {
   page += 1;
   simpleLightBox.destroy();
@@ -131,5 +130,5 @@ arrowTop.onclick = function () {
 
 window.addEventListener('scroll', function () {
   arrowTop.hidden = scrollY < document.documentElement.clientHeight;
-  console.log(document.documentElement.clientHeight);
+  console.log(arrowTop.hidden);
 });
