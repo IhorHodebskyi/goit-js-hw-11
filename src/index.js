@@ -125,9 +125,9 @@ function showLoadMorePage() {
 
 window.addEventListener('scroll', showLoadMorePage);
 
-arrowTop.onclick = function () {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+// arrowTop.onclick = function () {
+//   window.scrollTo({ top: 0, behavior: 'smooth' });
+// };
 
 // window.addEventListener('scroll', function () {
 //   arrowTop.hidden = scrollY < document.documentElement.clientHeight;
