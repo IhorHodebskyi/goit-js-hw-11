@@ -127,5 +127,3 @@ function onClick() {
       }
    });
 }
-
-/
