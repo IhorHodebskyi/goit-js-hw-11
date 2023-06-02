@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const searchingBox = document.querySelector('.searching-box');
 const searchQuery = document.querySelector('input[name="searchQuery"]');
-
+const upBtn = document.querySelector('.up-btn');
 const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
 const clear = elems => [...elems.children].forEach(div => div.remove());
@@ -16,13 +16,11 @@ let page = 0;
 let name = searchQuery.value;
 
 loadBtn.style.display = 'none';
+upBtn.style.display = 'none';
 
-const BASE_URL = 'https://pixabay.com/api/';
-const API_KEY = '36811784-c13148b3b1c3296db8a3ae716';
-const params = 'image_type=photo&orientation=horizontal&safesearch=true';
 async function fetchImages(name, page) {
    try {
-      const response = await axios.get(`${BASE_URL}?key=${API_KEY}&q=${name}&${params}&page=${page}&per_page=${perPage}`);
+      const response = await axios.get(`https://pixabay.com/api/?key=23580980-4f75151f85975025bb6074227&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=${perPage}`);
       console.log(response);
       return response.data;
    } catch (error) {
@@ -51,6 +49,14 @@ async function eventHandler(ev) {
             lightbox();
             //const lightbox = new SimpleLightbox('.gallery a', {});
             //smooth scrool to up
+            upBtn.style.display = 'block';
+            upBtn.addEventListener('click', onsCroll);
+
+            function onsCroll() {
+               searchingBox.scrollIntoView({
+                  behavior: 'smooth',
+               });
+            }
 
             if (page < totalPages) {
                loadBtn.style.display = 'block';
@@ -61,7 +67,6 @@ async function eventHandler(ev) {
             }
          } else {
             Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-
             clear(gallery); //reset view in case of failure
          }
       })
@@ -99,15 +104,19 @@ loadBtn.addEventListener('click', onClick);
 
 function onClick() {
    name = searchQuery.value;
+   console.log('load more images');
    page += 1;
    fetchImages(name, page).then(name => {
       let totalPages = Math.ceil(name.totalHits / perPage);
       renderGallery(name);
+      //smooth scroll
       const { height: cardHeight } = document.querySelector('.gallery').firstElementChild.getBoundingClientRect();
+
       window.scrollBy({
          top: cardHeight * 2,
          behavior: 'smooth',
       });
+      //===
       lightbox().refresh();
       console.log(`Current page: ${page}`);
 
@@ -118,3 +127,5 @@ function onClick() {
       }
    });
 }
+
+/
