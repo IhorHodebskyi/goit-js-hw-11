@@ -1,7 +1,8 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import Notiflix from 'notiflix';
-import axios from 'axios';
+import fetchImages from './js/fetchImages';
+import renderGallery from './js/renderGallery';
 
 const searchingBox = document.querySelector('.searching-box');
 const searchQuery = document.querySelector('input[name="searchQuery"]');
@@ -11,22 +12,15 @@ const gallery = document.querySelector('.gallery');
 const clear = elems => [...elems.children].forEach(div => div.remove());
 const loadBtn = document.querySelector('.load-more');
 const lightbox = () => new SimpleLightbox('.gallery a', {});
+
+searchForm.addEventListener('submit', eventHandler);
+
 let perPage = 40;
 let page = 0;
 let name = searchQuery.value;
 
 loadBtn.style.display = 'none';
 upBtn.style.display = 'none';
-
-async function fetchImages(name, page) {
-   try {
-      const response = await axios.get(`https://pixabay.com/api/?key=23580980-4f75151f85975025bb6074227&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=${perPage}`);
-      console.log(response);
-      return response.data;
-   } catch (error) {
-      console.log(error);
-   }
-}
 
 async function eventHandler(ev) {
    ev.preventDefault();
@@ -47,8 +41,6 @@ async function eventHandler(ev) {
             renderGallery(name);
             console.log(`Current page: ${page}`);
             lightbox();
-            //const lightbox = new SimpleLightbox('.gallery a', {});
-            //smooth scrool to up
             upBtn.style.display = 'block';
             upBtn.addEventListener('click', onsCroll);
 
@@ -71,33 +63,6 @@ async function eventHandler(ev) {
          }
       })
       .catch(error => console.log(error));
-}
-
-searchForm.addEventListener('submit', eventHandler);
-
-function renderGallery(name) {
-   const markup = name.hits
-      .map(hit => {
-         return `<div class="photo-card">
-      <a class="gallery__item" href="${hit.largeImageURL}"> <img class="gallery__image" src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" /></a>
-      <div class="info">
-        <p class="info-item">
-          <p><b>Likes</b> <br>${hit.likes}</br></p>
-        </p>
-        <p class="info-item">
-          <p><b>Views</b> <br>${hit.views}</br></p>
-        </p>
-        <p class="info-item">
-          <p><b>Comments</b> <br>${hit.comments}</br></p>
-        </p>
-        <p class="info-item">
-          <p><b>Downloads</b> <br>${hit.downloads}</br></p>
-        </p>
-      </div>
-    </div>`;
-      })
-      .join('');
-   gallery.insertAdjacentHTML('beforeend', markup);
 }
 
 loadBtn.addEventListener('click', onClick);
