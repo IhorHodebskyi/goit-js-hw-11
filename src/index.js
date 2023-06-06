@@ -3,7 +3,11 @@ import fetchImages from './js/fetchImages';
 import renderGallery from './js/renderGallery';
 import { refs } from './js/refs';
 
-import lightbox from './js/lightbox';
+
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
+lightbox = () => new SimpleLightbox('.gallery a', {});
 
 const clear = elems => [...elems.children].forEach(div => div.remove());
 
