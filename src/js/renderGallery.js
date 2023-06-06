@@ -1,4 +1,4 @@
-const gallery = document.querySelector('.gallery');
+import { refs } from './refs';
 
 export default function renderGallery(name) {
    const markup = name.hits
@@ -22,5 +22,5 @@ export default function renderGallery(name) {
      </div>`;
       })
       .join('');
-   gallery.insertAdjacentHTML('beforeend', markup);
+   refs.gallery.insertAdjacentHTML('beforeend', markup);
 }
