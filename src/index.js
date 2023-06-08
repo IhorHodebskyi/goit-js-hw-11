@@ -12,9 +12,9 @@ const clear = elems => [...elems.children].forEach(div => div.remove());
 
 refs.searchForm.addEventListener('submit', eventHandler);
 
-export let perPage = 40;
-export let page = 0;
-export let name = refs.searchQuery.value;
+let perPage = 40;
+let page = 0;
+let name = refs.searchQuery.value;
 
 refs.loadBtn.style.display = 'none';
 refs.upBtn.style.display = 'none';
